@@ -3,15 +3,13 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Central;
-
 
 /**
  * Created by arulgupta on 12/14/17.
  */
-@Autonomous(name = "Auto-Tele-Op", group = "Smart")
+@Autonomous(name = "Mecanum", group = "Smart")
 
-public class AutoTeleOp extends Central {
+public class Test_Mecanum extends Central {
 
     public ElapsedTime runtime = new ElapsedTime();
 
@@ -25,13 +23,14 @@ public class AutoTeleOp extends Central {
 
 
         while (opModeIsActive()) {
-            alignUltrasonic();
+            /*alignUltrasonic();
             Pair loc = location();
             telemetry.addData("X: ", loc.x);
             telemetry.addData("Y: ", loc.y);
             telemetry.update();
             sleep(5000);
             break;
+            */
 
         }
     }

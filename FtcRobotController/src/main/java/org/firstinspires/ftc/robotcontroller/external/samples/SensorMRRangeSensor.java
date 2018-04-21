@@ -48,7 +48,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * @see <a href="http://modernroboticsinc.com/range-sensor">MR Range Sensor</a>
  */
 @Autonomous(name = "Sensor: MR range sensor", group = "Sensor")
-@Disabled   // comment out or remove this line to enable this opmode
+   // comment out or remove this line to enable this opmode
 public class SensorMRRangeSensor extends LinearOpMode {
 
     ModernRoboticsI2cRangeSensor rangeSensor;
@@ -56,11 +56,10 @@ public class SensorMRRangeSensor extends LinearOpMode {
     @Override public void runOpMode() {
 
         // get a reference to our compass
-        rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range");
+        rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "ubl");
 
         // wait for the start button to be pressed
         waitForStart();
-
         while (opModeIsActive()) {
             telemetry.addData("raw ultrasonic", rangeSensor.rawUltrasonic());
             telemetry.addData("raw optical", rangeSensor.rawOptical());

@@ -55,6 +55,7 @@ public class Central extends LinearOpMode {
     protected static final double D_PAD_SPEED = 0.4;
     protected static final double CRAWL_SPEED = 0.2;
 
+
     //-------------------------JEWEL SENSOR----------------------
     private static final int RED_COLOR_VALUE = 5;
     private static final int BLUE_COLOR_VALUE = 1;
@@ -73,6 +74,14 @@ public class Central extends LinearOpMode {
     public static double ulr;
 
     public static final double snapSpeed = 0.05;
+    public static final double xCenterOffset = 4; //VALUE TO BE CHANGED
+    public static final double yCenterOffset = 4; //VALUE TO BE CHANGED
+
+    public static final double xDistBetweenUltra = 5;
+    public static final double yDistBetweenUltra = 5;
+    public static final double robotLength = 18;
+
+
 
 
     //--------------------------ENUMERATIONS---------------------
@@ -739,14 +748,16 @@ public class Central extends LinearOpMode {
         ubr = backRight.getDistance(DistanceUnit.INCH);
         ull = leftLeft.getDistance(DistanceUnit.INCH);
         ulr = leftRight.getDistance(DistanceUnit.INCH);
-        if (ubl < ubr || ull < ulr){ // left is smaller, turn ccw
+        int a = isPerpendicular();
+        if (a < 0){ // left is smaller, turn ccw
             snapUltra(turnside.ccw);
         }
-        else if (ubl > ubr || ull > ulr){ // right is smaller, turn cw
+        else if (a > 0){ // right is smaller, turn cw
             snapUltra(turnside.cw);
         }
         setIMUPerpendicular();
     }
+
 
     public void snapUltra(turnside direction) throws InterruptedException{
         switch (direction){
@@ -774,13 +785,52 @@ public class Central extends LinearOpMode {
 
     }
     public Pair location(){
+        Pair current;
         ubl = backLeft.getDistance(DistanceUnit.INCH);
         ubr = backRight.getDistance(DistanceUnit.INCH);
         ull = leftLeft.getDistance(DistanceUnit.INCH);
         ulr = leftRight.getDistance(DistanceUnit.INCH);
-        Pair current = new Pair((ubl+ubr)/2, (ull + ulr)/2);
+        if (isPerpendicular() == 0) {
+            current = convertToCenter((ubl + ubr) / 2, (ull + ulr) / 2);
+        }
+        else {
+            double xDiff = ull - ulr;
+            double yDiff = ubl - ubr;
+            double thetax1 = Math.atan2(xDiff, xDistBetweenUltra);
+            double thetay1 = Math.atan2(yDiff, yDistBetweenUltra);
+            double theta = (thetax1 + thetay1) / 2;
+
+            double offsetHeight = robotLength * Math.sin(theta);
+
+            double toEdgeY = (ubl - (robotLength - yDistBetweenUltra) * Math.tan(theta) / 2) * Math.sin(Math.PI - theta);
+            double y = toEdgeY + offsetHeight / 2;
+
+            double toEdgeX = (ull - (robotLength - xDistBetweenUltra) * Math.tan(theta) / 2) * Math.sin(Math.PI - theta);
+            double x = toEdgeX + offsetHeight / 2;
+
+            current = convertToCenter(x, y, (float) theta);
+        }
         return current;
 
+    }
+    public int isPerpendicular(){
+        if (ubl < ubr || ull < ulr){
+            return -1;                  // left is smaller, turn ccw
+        }
+        else if (ubl > ubr || ull > ulr){
+            return  1;                  // right is smaller, turn cw
+        }
+        else {
+            return 0;                   // perpendicular
+        }
+
+    }
+
+    public Pair convertToCenter(double x, double y){
+        return new Pair(x + xCenterOffset, y + yCenterOffset, 0);
+    }
+    public Pair convertToCenter(double x, double y, float orient){
+        return new Pair(x + xCenterOffset, y + yCenterOffset, orient);
     }
     public void encoderTrackingOn(){
         encStartLoc = location();
@@ -791,6 +841,16 @@ public class Central extends LinearOpMode {
     public void addToEncoder(movements movement){
         int[] xy = new int[2];
         int rotation;
+
+    }
+
+    public void move(Pair destination, float orientation){ // destination is not rotated
+        Pair current = location();
+        while (current.getX() != destination.getX() && current.getY() != destination.getY()){
+            // MOVE ALGORITHM
+
+        }
+
 
     }
 
@@ -971,9 +1031,9 @@ public class Central extends LinearOpMode {
     }
     public void setupAutoTeleOp() throws InterruptedException{
         backLeft = ultrasonicSensor(hardwareMap, backLeftS);
-        //backRight = ultrasonicSensor(hardwareMap, backRightS);
-        //leftLeft = ultrasonicSensor(hardwareMap, leftLeftS);
-        //leftRight = ultrasonicSensor(hardwareMap, leftRightS);
+        backRight = ultrasonicSensor(hardwareMap, backRightS);
+        leftLeft = ultrasonicSensor(hardwareMap, leftLeftS);
+        leftRight = ultrasonicSensor(hardwareMap, leftRightS);
     }
 
     //------------------DRIVETRAIN TELEOP FUNCTIONS------------------------------------------------------------------------
@@ -1006,12 +1066,25 @@ public class Central extends LinearOpMode {
 
     static class Pair{
         double x, y;
+        float orient;
 
-        public Pair(double x, double y){
+        public Pair(double x, double y, float orient){
             this.x = x;
             this.y = y;
+            this.orient = orient;
         }
 
+        public double getX() {
+            return x;
+        }
+
+        public double getY() {
+            return y;
+        }
+
+        public float getOrient() {
+            return orient;
+        }
     }
 
 

@@ -21,22 +21,23 @@ public class AutoTeleOp extends Central {
 
         CentralClass(team.red2, setupType.autonomous);
 
+        sleep(1000);
+
+
         waitForStart();
         runtime.reset();
 
 
         while (opModeIsActive()) {
-            /*alignUltrasonic();
+            alignUltrasonic();
             Pair loc = location();
             telemetry.addData("X: ", loc.x);
             telemetry.addData("Y: ", loc.y);
             telemetry.update();
-            */
 
-            telemetry.addData("Distance: ", backLeft.getDistance(DistanceUnit.INCH));
-            telemetry.update();
-            sleep(10);
 
+
+            break;
 
         }
     }
