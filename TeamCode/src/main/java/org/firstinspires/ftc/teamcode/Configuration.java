@@ -6,6 +6,7 @@ package org.firstinspires.ftc.teamcode;
 
 public class Configuration {
 
+    //MAIN ROBOT
     public static final String imuRedS = "imu";
 
     public static final String motorFRS = "motorFR";
@@ -33,5 +34,18 @@ public class Configuration {
     public static final String backRightS = "ubr";
     public static final String leftLeftS  = "ull";
     public static final String leftRightS = "ulr";
+
+    //Robin
+
+    public static final String rightMotorS = "rtMotor";
+    public static final String leftMotorS = "ltMotor";
+
+    public static final String liftS = "lift";
+    public static final String flickerS = "flicker";
+
+    public static final String rightServoS = "rtServo";
+    public static final String leftServoS = "ltServo";
+
+
 
 }

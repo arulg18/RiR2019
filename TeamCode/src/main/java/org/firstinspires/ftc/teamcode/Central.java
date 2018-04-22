@@ -10,10 +10,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.SensorMRRangeSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -120,7 +118,7 @@ public class Central extends LinearOpMode {
     }
 
     public enum setupType{
-        autonomous, glyph, jewel, relic, drive, teleop;
+        autonomous, glyph, robin, jewel, relic, drive, teleop;
     }
 
     public enum team{
@@ -160,6 +158,7 @@ public class Central extends LinearOpMode {
     public static boolean isnotstopped;
     public team thisteam;
 
+    public static HardwareMap thishardwareMap;
     public static float perpZ;
 
 
@@ -199,6 +198,17 @@ public class Central extends LinearOpMode {
     public ModernRoboticsI2cRangeSensor leftRight  ;
 
 
+    //ROBIN
+    public DcMotor rightMotor;
+    public DcMotor leftMotor;
+
+    public DcMotor lift;
+    public DcMotor flicker;
+
+    public Servo rightServo;
+    public Servo leftServo;
+
+
     // ARRAYS OF SYSTEMS
 
     public DcMotor[] drivetrain = new DcMotor[4];
@@ -223,6 +233,7 @@ public class Central extends LinearOpMode {
     }
 
     public void CentralClass(team player, setupType... setup) throws InterruptedException{
+        thishardwareMap = hardwareMap;
         thisteam = player;
         for (setupType type : setup) {
             switch (type){
@@ -243,6 +254,9 @@ public class Central extends LinearOpMode {
                     break;
                 case glyph:
                     setupGlyph();
+                    break;
+                case robin:
+                    setupRobin();
                     break;
             }
         }
@@ -849,6 +863,7 @@ public class Central extends LinearOpMode {
         while (current.getX() != destination.getX() && current.getY() != destination.getY()){
             // MOVE ALGORITHM
 
+
         }
 
 
@@ -890,8 +905,8 @@ public class Central extends LinearOpMode {
     }
 
     //------------------HARDWARE SETUP FUNCTIONS------------------------------------------------------------------------
-    public DcMotor motor(DcMotor motor, HardwareMap hardwareMap, String name, DcMotor.Direction direction) throws InterruptedException {
-        motor = hardwareMap.dcMotor.get(name);
+    public DcMotor motor(String name, DcMotor.Direction direction) throws InterruptedException {
+        DcMotor motor = hardwareMap.dcMotor.get(name);
         motor.setDirection(DcMotor.Direction.FORWARD);
         motor.setPower(0);
         return motor;
@@ -914,22 +929,22 @@ public class Central extends LinearOpMode {
         this.drivetrain = motor;
 
     }
-    public Servo servo(Servo servo, HardwareMap hardwareMap, String name, Servo.Direction direction, double min, double max, double start) throws InterruptedException {
-        servo = hardwareMap.servo.get(name);
+    public Servo servo(String name, Servo.Direction direction, double min, double max, double start) throws InterruptedException {
+        Servo servo = hardwareMap.servo.get(name);
         servo.setDirection(direction);
         servo.scaleRange(min, max);
         servo.setPosition(start);
         return servo;
     }
-    public CRServo servo(CRServo servo, HardwareMap hardwareMap, String name, DcMotorSimple.Direction direction, double startSpeed) throws InterruptedException {
-        servo = hardwareMap.crservo.get(name);
+    public CRServo servo(String name, DcMotorSimple.Direction direction, double startSpeed) throws InterruptedException {
+        CRServo servo = hardwareMap.crservo.get(name);
         servo.setDirection(direction);
 
         servo.setPower(0);
         return servo;
     }
-    public ColorSensor colorSensor(ColorSensor sensor, HardwareMap hardwareMap, String name, boolean ledOn) throws InterruptedException {
-        sensor = hardwareMap.colorSensor.get(name);
+    public ColorSensor colorSensor(String name, boolean ledOn) throws InterruptedException {
+        ColorSensor sensor = hardwareMap.colorSensor.get(name);
         sensor.enableLed(ledOn);
 
         telemetry.addData("Beacon Red Value: ", sensor.red());
@@ -937,7 +952,7 @@ public class Central extends LinearOpMode {
 
         return sensor;
     }
-    public ModernRoboticsI2cRangeSensor ultrasonicSensor(HardwareMap hardwareMap, String name) throws InterruptedException {
+    public ModernRoboticsI2cRangeSensor ultrasonicSensor(String name) throws InterruptedException {
 
         return hardwareMap.get(ModernRoboticsI2cRangeSensor.class, name);
     }
@@ -955,37 +970,37 @@ public class Central extends LinearOpMode {
 
 
     public void setupDrivetrain() throws InterruptedException {
-        motorFR = motor(motorFR, hardwareMap, motorFRS, DcMotorSimple.Direction.FORWARD);
-        motorFL = motor(motorFL, hardwareMap, motorFLS, DcMotorSimple.Direction.FORWARD);
-        motorBR = motor(motorBR, hardwareMap, motorBRS, DcMotorSimple.Direction.FORWARD);
-        motorBL = motor(motorBL, hardwareMap, motorBLS, DcMotorSimple.Direction.FORWARD);
+        motorFR = motor(motorFRS, DcMotorSimple.Direction.FORWARD);
+        motorFL = motor(motorFLS, DcMotorSimple.Direction.FORWARD);
+        motorBR = motor(motorBRS, DcMotorSimple.Direction.FORWARD);
+        motorBL = motor(motorBLS, DcMotorSimple.Direction.FORWARD);
 
         motorDriveMode(EncoderMode.ON, motorFR, motorFL, motorBR, motorBL);
     }
     public void setupRelic() throws InterruptedException{
-        angleServo = servo(angleServo, hardwareMap, angleServoS, Servo.Direction.FORWARD, MIN_POSITION_WRIST, MAX_POSITION_WRIST, START_POSITION_WRIST);
-        Claw = servo(Claw, hardwareMap, ClawS, Servo.Direction.FORWARD, MIN_POSITION_CLAW, MAX_POSITION_CLAW, START_POSITION_CLAW);
-        relicMotorIn = motor(relicMotorIn, hardwareMap, relicMotorInS, DcMotorSimple.Direction.FORWARD);
+        angleServo = servo(angleServoS, Servo.Direction.FORWARD, MIN_POSITION_WRIST, MAX_POSITION_WRIST, START_POSITION_WRIST);
+        Claw = servo(ClawS, Servo.Direction.FORWARD, MIN_POSITION_CLAW, MAX_POSITION_CLAW, START_POSITION_CLAW);
+        relicMotorIn = motor(relicMotorInS, DcMotorSimple.Direction.FORWARD);
         telemetry.addLine("Setup");
         telemetry.update();
     }// FINISH
     public void setupJewel() throws InterruptedException{
-        jewelDown = servo(jewelDown, hardwareMap, jewelDownS, Servo.Direction.FORWARD, MIN_POSITION_DOWN, MAX_POSITION_DOWN, START_POSITION_DOWN);
-        jewelFlick = servo(jewelFlick, hardwareMap, jewelFlickS, Servo.Direction.FORWARD, MIN_POSITION_FLICK, MAX_POSITION_FLICK, START_POSITION_FLICK);
+        jewelDown = servo(jewelDownS, Servo.Direction.FORWARD, MIN_POSITION_DOWN, MAX_POSITION_DOWN, START_POSITION_DOWN);
+        jewelFlick = servo(jewelFlickS, Servo.Direction.FORWARD, MIN_POSITION_FLICK, MAX_POSITION_FLICK, START_POSITION_FLICK);
 
-        jewelSensor = colorSensor(jewelSensor, hardwareMap, jewelSensorS, JEWEL_SENSOR_LED_ON);
+        jewelSensor = colorSensor(jewelSensorS, JEWEL_SENSOR_LED_ON);
 
     }
     public void setupGlyph() throws InterruptedException{
-        pullServo = servo(pullServo, hardwareMap, pullServoS, Servo.Direction.FORWARD, MIN_POSITION_PULL, MAX_POSITION_PULL, START_POSITION_PULL);
-        leftTread = motor(leftTread, hardwareMap, leftTreadS, DcMotorSimple.Direction.FORWARD);
-        rightTread = motor(rightTread, hardwareMap, rightTreadS, DcMotorSimple.Direction.FORWARD);
+        pullServo = servo(pullServoS, Servo.Direction.FORWARD, MIN_POSITION_PULL, MAX_POSITION_PULL, START_POSITION_PULL);
+        leftTread = motor(leftTreadS, DcMotorSimple.Direction.FORWARD);
+        rightTread = motor(rightTreadS, DcMotorSimple.Direction.FORWARD);
     }
     public void setupAutoGlyph() throws InterruptedException{
         telemetry.addLine("starting...");
         telemetry.update();
-        LGrabber = servo(LGrabber, hardwareMap, LGrabberS, Servo.Direction.FORWARD, MIN_POSITION_LGRAB, MAX_POSITION_LGRAB, START_POSITION_LGRAB);
-        RGrabber = servo(RGrabber, hardwareMap, RGrabberS, Servo.Direction.FORWARD, MIN_POSITION_RGRAB, MAX_POSITION_RGRAB, R_READY_POSITION);
+        LGrabber = servo(LGrabberS, Servo.Direction.FORWARD, MIN_POSITION_LGRAB, MAX_POSITION_LGRAB, START_POSITION_LGRAB);
+        RGrabber = servo(RGrabberS, Servo.Direction.FORWARD, MIN_POSITION_RGRAB, MAX_POSITION_RGRAB, R_READY_POSITION);
         sleep(1000);
         RGrabber.setPosition(START_POSITION_RGRAB);
 
@@ -999,7 +1014,7 @@ public class Central extends LinearOpMode {
         parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
         parameters.loggingEnabled = true; //copypasted from BNO055IMU sample code, no clue what this does
         parameters.loggingTag = "IMU"; //copypasted from BNO055IMU sample code, no clue what this does
-        imu = hardwareMap.get(BNO055IMUImpl.class, imuRedS);
+        imu = thishardwareMap.get(BNO055IMUImpl.class, imuRedS);
         imu.initialize(parameters);
         Position startpos;
         /*switch (side) { //initialize the position with correct coordinates
@@ -1030,10 +1045,20 @@ public class Central extends LinearOpMode {
         initorient = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
     }
     public void setupAutoTeleOp() throws InterruptedException{
-        backLeft = ultrasonicSensor(hardwareMap, backLeftS);
-        backRight = ultrasonicSensor(hardwareMap, backRightS);
-        leftLeft = ultrasonicSensor(hardwareMap, leftLeftS);
-        leftRight = ultrasonicSensor(hardwareMap, leftRightS);
+        backLeft = ultrasonicSensor(backLeftS);
+        backRight = ultrasonicSensor(backRightS);
+        leftLeft = ultrasonicSensor(leftLeftS);
+        leftRight = ultrasonicSensor(leftRightS);
+    }
+    public void setupRobin() throws InterruptedException{
+        rightMotor = motor(rightMotorS, DcMotorSimple.Direction.FORWARD);
+        leftMotor = motor(leftMotorS, DcMotorSimple.Direction.FORWARD);
+
+        lift = motor(liftS, DcMotorSimple.Direction.FORWARD);
+        flicker = motor(flickerS, DcMotorSimple.Direction.FORWARD);
+
+        rightServo = servo(rightServoS, Servo.Direction.FORWARD, 0, 1, 0.5);
+        leftServo = servo(leftServoS, Servo.Direction.FORWARD, 0, 1, 0.5);
     }
 
     //------------------DRIVETRAIN TELEOP FUNCTIONS------------------------------------------------------------------------
@@ -1061,8 +1086,6 @@ public class Central extends LinearOpMode {
             motor.setPower(0);
         }
     }
-
-
 
     static class Pair{
         double x, y;
