@@ -79,7 +79,11 @@ public class Central extends LinearOpMode {
     public static final double yDistBetweenUltra = 5;
     public static final double robotLength = 18;
 
-
+    //-----------------------RangeFinders------------------------------
+    public  static ModernRoboticsI2cRangeSensor yleft;
+    public  static ModernRoboticsI2cRangeSensor yright;
+    public  static ModernRoboticsI2cRangeSensor xfront;
+    public  static ModernRoboticsI2cRangeSensor xback;
 
 
     //--------------------------ENUMERATIONS---------------------
@@ -146,7 +150,7 @@ public class Central extends LinearOpMode {
 
 
     //--------------------------CONFIGURATIONS-----------------------
-    public BNO055IMUImpl imu;
+    public static BNO055IMUImpl imu;
     public BNO055IMUImpl.Parameters parameters = new BNO055IMUImpl.Parameters();
     public Orientation current;
     float initorient;
