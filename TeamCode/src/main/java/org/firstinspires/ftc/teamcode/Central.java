@@ -35,7 +35,8 @@ import static org.firstinspires.ftc.teamcode.ServoValues.*;
 public class Central extends LinearOpMode {
 
 
-    public ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime runtime = new ElapsedTime();
+    private team thisTeam;
 
     //--------------------------------ENCODERS-------------------------
     private static final double COUNTS_PER_MOTOR_NEVEREST = 1680;
@@ -126,7 +127,7 @@ public class Central extends LinearOpMode {
     }
 
     public enum team{
-        red1, red2, blue1, blue2;
+        red1, red2, blue1, blue2, none;
     }
 
     public enum flick{
@@ -160,7 +161,6 @@ public class Central extends LinearOpMode {
     float ytilt;
     public static final double sensitivity = 1;
     public static boolean isnotstopped;
-    public team thisteam;
 
     public static HardwareMap thishardwareMap;
     public static float perpZ;
@@ -238,7 +238,7 @@ public class Central extends LinearOpMode {
 
     public void CentralClass(team player, setupType... setup) throws InterruptedException{
         thishardwareMap = hardwareMap;
-        thisteam = player;
+        thisTeam = player;
         for (setupType type : setup) {
             switch (type){
                 case autonomous:
@@ -268,7 +268,7 @@ public class Central extends LinearOpMode {
     }
 
     public void runOpMode() throws InterruptedException {
-        CentralClass(team.blue1, setupType.autonomous);
+        CentralClass(team.none, setupType.autonomous);
     }
 
     //------------------------ENCODER MOVEMENTS----------------------------
@@ -1116,15 +1116,6 @@ public class Central extends LinearOpMode {
             return orient;
         }
     }
-
-
-
-
-
-
-
-
-
 
 
 }
