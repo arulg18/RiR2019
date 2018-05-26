@@ -39,21 +39,21 @@ public class Central extends LinearOpMode {
     private team thisTeam;
 
     //--------------------------------ENCODERS-------------------------
-    private static final double COUNTS_PER_MOTOR_NEVEREST = 1680;
-    private static final double COUNTS_PER_MOTOR_TETRIX = 1440;
-    private static final double DRIVE_GEAR_REDUCTION = 1.0;
-    private static final double WHEEL_DIAMETER_INCHES = 4.0;
-    private static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_NEVEREST * DRIVE_GEAR_REDUCTION) /
+    public static final double COUNTS_PER_MOTOR_NEVEREST = 1680;
+    public static final double COUNTS_PER_MOTOR_TETRIX = 1440;
+    public static final double DRIVE_GEAR_REDUCTION = 1.0;
+    public static final double WHEEL_DIAMETER_INCHES = 4.0;
+    public static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_NEVEREST * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);                   // Conversion: Encoder Count to Inches
     public static final double COUNTS_PER_TETRIX_INCH = (COUNTS_PER_MOTOR_TETRIX * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);               // Conversion: Encoder Counts Motor Tetrix to Inches
 
     public static final double FLICKER_CONVERSION = 1680/(2*COUNTS_PER_INCH);
     //--------------------------------TELE-OP VALUES--------------------
-    protected static final double ROTATION_SPEED = 0.8;
-    protected static final double DEAD_ZONE_SIZE = 0.1;
-    protected static final double D_PAD_SPEED = 0.4;
-    protected static final double CRAWL_SPEED = 0.2;
+    public static final double ROTATION_SPEED = 0.8;
+    public static final double DEAD_ZONE_SIZE = 0.1;
+    public static final double D_PAD_SPEED = 0.4;
+    public static final double CRAWL_SPEED = 0.2;
 
     //-------------------------JEWEL SENSOR----------------------
     private static final int RED_COLOR_VALUE = 5;
