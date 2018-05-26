@@ -35,7 +35,8 @@ import static org.firstinspires.ftc.teamcode.ServoValues.*;
 public class Central extends LinearOpMode {
 
 
-    public ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime runtime = new ElapsedTime();
+    private team thisTeam;
 
     //--------------------------------ENCODERS-------------------------
     private static final double COUNTS_PER_MOTOR_NEVEREST = 1680;
@@ -47,12 +48,12 @@ public class Central extends LinearOpMode {
     public static final double COUNTS_PER_TETRIX_INCH = (COUNTS_PER_MOTOR_TETRIX * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);               // Conversion: Encoder Counts Motor Tetrix to Inches
 
+    public static final double FLICKER_CONVERSION = 1680/(2*COUNTS_PER_INCH);
     //--------------------------------TELE-OP VALUES--------------------
     protected static final double ROTATION_SPEED = 0.8;
     protected static final double DEAD_ZONE_SIZE = 0.1;
     protected static final double D_PAD_SPEED = 0.4;
     protected static final double CRAWL_SPEED = 0.2;
-
 
     //-------------------------JEWEL SENSOR----------------------
     private static final int RED_COLOR_VALUE = 5;
@@ -102,7 +103,7 @@ public class Central extends LinearOpMode {
         ccwback(1,1,0,0),
         cwfront(0,0,-1,-1),
         ccwfront(0,0,1,1),
-
+        flick(-1),
         glyphUp,
         glyphDown,
         treadUp,
@@ -126,7 +127,7 @@ public class Central extends LinearOpMode {
     }
 
     public enum team{
-        red1, red2, blue1, blue2;
+        red1, red2, blue1, blue2, none;
     }
 
     public enum flick{
@@ -160,7 +161,6 @@ public class Central extends LinearOpMode {
     float ytilt;
     public static final double sensitivity = 1;
     public static boolean isnotstopped;
-    public team thisteam;
 
     public static HardwareMap thishardwareMap;
     public static float perpZ;
@@ -238,7 +238,7 @@ public class Central extends LinearOpMode {
 
     public void CentralClass(team player, setupType... setup) throws InterruptedException{
         thishardwareMap = hardwareMap;
-        thisteam = player;
+        thisTeam = player;
         for (setupType type : setup) {
             switch (type){
                 case autonomous:
@@ -268,7 +268,7 @@ public class Central extends LinearOpMode {
     }
 
     public void runOpMode() throws InterruptedException {
-        CentralClass(team.blue1, setupType.autonomous);
+        CentralClass(team.none, setupType.autonomous);
     }
 
     //------------------------ENCODER MOVEMENTS----------------------------
@@ -1063,6 +1063,8 @@ public class Central extends LinearOpMode {
 
         rightServo = servo(rightServoS, Servo.Direction.FORWARD, 0, 1, 0.5);
         leftServo = servo(leftServoS, Servo.Direction.FORWARD, 0, 1, 0.5);
+
+        motorDriveMode(EncoderMode.ON, lift, flicker);
     }
 
     //------------------DRIVETRAIN TELEOP FUNCTIONS------------------------------------------------------------------------
@@ -1074,6 +1076,7 @@ public class Central extends LinearOpMode {
 
         }
     }
+
     public void driveTrainMovementAccelerate(double speed, Central.movements movement) throws InterruptedException{     // DOESNT WORK
         double[] signs = movement.getDirections();
         for (double i = 0; i <= speed; i+=.1) {
@@ -1113,15 +1116,6 @@ public class Central extends LinearOpMode {
             return orient;
         }
     }
-
-
-
-
-
-
-
-
-
 
 
 }
