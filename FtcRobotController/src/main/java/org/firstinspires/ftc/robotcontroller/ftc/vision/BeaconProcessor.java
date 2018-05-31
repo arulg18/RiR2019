@@ -11,10 +11,7 @@ import org.opencv.imgproc.Imgproc;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by vandejd1 on 8/29/16.
- * FTC Team EV 7393
- */
+
 public class BeaconProcessor implements ImageProcessor<BeaconColorResult> {
     private static final String TAG = "BeaconProcessor";
     private static final double MIN_MASS = 6;
@@ -43,14 +40,20 @@ public class BeaconProcessor implements ImageProcessor<BeaconColorResult> {
         List<Scalar> hsvMax = new ArrayList<>();
 
         //hsvMin.add(new Scalar(  H,   S,   V  ));
-        hsvMin.add(new Scalar(300/2,  50, 150)); //red min
-        hsvMax.add(new Scalar( 60/2, 255, 255)); //red max
+       //hsvMin.add(new Scalar(300/2,  50, 150)); //red min
+       //hsvMax.add(new Scalar( 60/2, 255, 255)); //red max
 
-        hsvMin.add(new Scalar( 60/2,  50, 150)); //green min
-        hsvMax.add(new Scalar(180/2, 255, 255)); //green max
+       //hsvMin.add(new Scalar( 60/2,  50, 150)); //green min
+       //hsvMax.add(new Scalar(180/2, 255, 255)); //green max
 
-        hsvMin.add(new Scalar(180/2,  50, 150)); //blue min
-        hsvMax.add(new Scalar(300/2, 255, 255)); //blue max
+       //hsvMin.add(new Scalar(180/2,  50, 150)); //blue min
+       //hsvMax.add(new Scalar(300/2, 255, 255)); //blue max
+
+        hsvMin.add(new Scalar(28,200,130)); //brown min
+        hsvMax.add(new Scalar(27,255,190)); //brown max
+
+        //hsvMin.add(new Scalar( 0,  0, 83)); //gray min
+        //hsvMax.add(new Scalar(0, 0, 66)); //gray max
 
         // make a list of channels that are blank (used for combining binary images)
         List<Mat> rgbaChannels = new ArrayList<>();
@@ -63,7 +66,7 @@ public class BeaconProcessor implements ImageProcessor<BeaconColorResult> {
         // This next variable keeps track of the color on each side that had the max "color mass"
         // with  0=red  1=green  2=blue  3=UNKNOWN
         // So both sides start as unknown:
-        int[] maxMassIndex = { 3, 3}; // index of the max mass
+        int[] maxMassIndex = { 1, 1}; // index of the max mass
 
         // We are about to loop over the filters and compute the "color mass" for each color
         // on each side of the image.
@@ -75,7 +78,7 @@ public class BeaconProcessor implements ImageProcessor<BeaconColorResult> {
         int[] data = new int[3]; //used to read the colSum
 
         //loop through the filters
-        for(int i=0; i<3; i++) {
+        for(int i=0; i<1; i++) {
             //apply HSV thresholds
             maskedImage = new Mat();
             ImageUtil.hsvInRange(hsv, hsvMin.get(i), hsvMax.get(i), maskedImage);
@@ -118,6 +121,7 @@ public class BeaconProcessor implements ImageProcessor<BeaconColorResult> {
 
         //use the maxIndex array to get the left and right colors
         BeaconColorResult.BeaconColor[] beaconColors = BeaconColorResult.BeaconColor.values();
+        int[] mi = maxMassIndex;
         BeaconColorResult.BeaconColor left = beaconColors[maxMassIndex[0]];
         BeaconColorResult.BeaconColor right = beaconColors[maxMassIndex[1]];
 
