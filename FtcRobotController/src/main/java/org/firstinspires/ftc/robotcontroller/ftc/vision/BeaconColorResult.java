@@ -24,10 +24,12 @@ public class BeaconColorResult {
         return leftColor + ", " + rightColor; }
 
     public enum BeaconColor {
-        RED (ImageUtil.RED),
-        GREEN (ImageUtil.GREEN),
-        BLUE (ImageUtil.BLUE),
-        UNKNOWN (ImageUtil.BLACK);
+       //RED (ImageUtil.RED),
+       //GREEN (ImageUtil.GREEN),
+       //BLUE (ImageUtil.BLUE),
+        BROWN (ImageUtil.BROWN),
+        //GRAY (ImageUtil.GRAY),
+        UNKNOWN(ImageUtil.WHITE);
 
         public final Scalar color;
         BeaconColor(Scalar color) {
